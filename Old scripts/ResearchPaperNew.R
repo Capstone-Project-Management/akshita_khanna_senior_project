@@ -21,7 +21,7 @@ library(dplyr)
 library(tidyr)
 
 #Importing data
-data <- read_csv("DATA/usa_00008.csv.gz", show_col_types=FALSE)
+data <- read_csv("DATA/usa_00008.csv.gz", show_col_types = FALSE)
 #data <- filter(data, data$OCC != 9920 & data$SEX != 9 & data$AGE != 999 & data$EDUC != 99 & data$YRSUSA1 != 98 & data$YRSUSA1 != 99 & data$INCWAGE != 999999& data$INCWAGE != 999998)
 data$aiExposure <- 0
 data$whiteCollar <- 0
@@ -773,81 +773,15 @@ data$whiteCollar[data$OCC == 3255] <- 1
 data$whiteCollar[data$OCC == 3256] <- 1
 data$whiteCollar[data$OCC == 3500] <- 1
 
-# data <- data %>%
-#   arrange(OCC, YEAR) %>%
-#   group_by(OCC) %>%
-#   mutate(aiExposure_lag1 = lag(aiExposure, 1)) %>%
-#   ungroup()
-#
-# collarModelBlack <- lm(data$aiExposure ~ data + data$isBlack + data$INCWAGE*data$isBlack)
-# summary(collarModelBlack)
-#
-# collarModelHispanic <- lm(data$aiExposure ~ data$whiteCollar + data$isHispanic + data$whiteCollar*data$isHispanic)
-# summary(collarModelHispanic)
-#
-# collarModelWhite <- lm(data$aiExposure ~ data$whiteCollar + data$isWhite + data$whiteCollar*data$isWhite)
-# summary(collarModelWhite)
-#
-# collarModelAsian <- lm(data$aiExposure ~ data$whiteCollar + data$isAsian + data$whiteCollar*data$isAsian)
-# summary(collarModelAsian)
-#
-# collarModelNative <- lm(data$aiExposure ~ data$whiteCollar + data$isNative + data$whiteCollar*data$isNative)
-# summary(collarModelNative)
-#
-# INCEDUCInteract <- lm(data$aiExposure ~ data$INCWAGE*data$EDUC)
-# summary(INCEDUCInteract)
-
 #Creating linear models to see how different demographic variables affect AI Exposure
 genderModel <- lm(aiExposure ~ as.factor(SEX) + as.factor(YEAR), data = data)
-# summary(genderModel)
 sexPlot <- ggplot(data, aes(x = SEX, y = aiExposure)) +
   geom_boxplot(fill = "lightblue") +
   labs(title = "AI Exposure by Sex", x = "Sex", y = "AI Exposure") +
   theme_minimal()
 ggsave("sexPlot.jpg", plot = sexPlot, width = 8, height = 6)
 
-# set.seed(123)  # For reproducibility
-#
-# # Split the data into 80% for training and 20% for testing
-# trainIndex <- sample(1:nrow(data), 0.8 * nrow(data))
-# trainData <- data[trainIndex, ]
-# testData <- data[-trainIndex, ]
-#
-# # Function to fit models, compute MSEs, and print full dataset regression results
-# run_poly_regression <- function(var) {
-#   for (deg in 1:3) {
-#     cat("\n---", var, "Degree", deg, "---\n")
-#
-#     # Fit model on training data
-#     model <- lm(aiExposure ~ poly(get(var), deg) + as.factor(YEAR), data = trainData)
-#
-#     # Predict on training and test data
-#     train_predictions <- predict(model, newdata = trainData)
-#     test_predictions <- predict(model, newdata = testData)
-#
-#     # Calculate MSE for training and test data
-#     train_mse <- mean((trainData$aiExposure - train_predictions)^2)
-#     test_mse <- mean((testData$aiExposure - test_predictions)^2)
-#
-#     cat("Training MSE:", train_mse, "\n")
-#     cat("Test MSE:", test_mse, "\n")
-#
-#     # Fit model on the full dataset
-#     full_model <- lm(aiExposure ~ poly(get(var), deg) + as.factor(YEAR), data = data)
-#
-#     # Print full dataset regression summary
-#     print(summary(full_model))
-#   }
-# }
-#
-# # Run regression for each variable
-# variables <- c("AGE", "YRSUSA1", "INCWAGE")
-# for (var in variables) {
-#   run_poly_regression(var)
-# }
-#
 educModel <- lm(aiExposure ~ as.factor(EDUC) + as.factor(YEAR), data=data)
-# summary(educModel)
 educPlot <- ggplot(data, aes(x = EDUC, y = aiExposure)) +
   geom_boxplot(fill = "lightblue") +
   labs(title = "AI Exposure by Education Level", x = "Education", y = "AI Exposure") +
@@ -855,7 +789,6 @@ educPlot <- ggplot(data, aes(x = EDUC, y = aiExposure)) +
 ggsave("educPlot.jpg", plot = educPlot, width = 8, height = 6)
 
 ageModel <- lm(aiExposure ~ poly(AGE, 2) + as.factor(YEAR), data=data)
-# summary(ageModel)
 agePlot <- ggplot(data, aes(x = AGE, y = aiExposure)) +
   geom_point(alpha = 0.3, color = "gray") +
   geom_smooth(method = "lm", formula = y ~ poly(x, 2), color = "blue", se = FALSE) +
@@ -865,7 +798,6 @@ agePlot <- ggplot(data, aes(x = AGE, y = aiExposure)) +
 ggsave("agePlot.jpg", plot = agePlot, width = 8, height = 6)
 
 yrsInUSModel <- lm(aiExposure ~ poly(YRSUSA1, 2) + as.factor(YEAR), data=data)
-# summary(yrsInUSModel)
 yrsInUSPlot <- ggplot(data, aes(x = YRSUSA1, y = aiExposure)) +
   geom_point(alpha = 0.3, color = "gray") +
   geom_smooth(method = "lm", formula = y ~ poly(x, 2), color = "blue", se = FALSE) +
@@ -875,7 +807,6 @@ yrsInUSPlot <- ggplot(data, aes(x = YRSUSA1, y = aiExposure)) +
 ggsave("yrsInUSPlot.jpg", plot = yrsInUSPlot, width = 8, height = 6)
 
 IncModel <- lm(aiExposure ~ poly(INCWAGE, 2) + as.factor(YEAR), data=data)
-# summary(IncModel)
 IncPlot <- ggplot(data, aes(x = INCWAGE, y = aiExposure)) +
   geom_point(alpha = 0.3, color = "gray") +
   geom_smooth(method = "lm", formula = y ~ poly(x, 2), color = "blue", se = FALSE) +
@@ -885,7 +816,6 @@ IncPlot <- ggplot(data, aes(x = INCWAGE, y = aiExposure)) +
 ggsave("IncPlot.jpg", plot = IncPlot, width = 8, height = 6)
 
 raceModel <- lm(aiExposure ~ as.factor(RACHSING) + as.factor(YEAR), data = data)
-# summary(raceModel)
 racePlot <- ggplot(data, aes(x = RACHSING, y = aiExposure)) +
   geom_boxplot(fill = "lightblue") +
   labs(title = "AI Exposure by Race", x = "Race", y = "AI Exposure") +
@@ -893,7 +823,6 @@ racePlot <- ggplot(data, aes(x = RACHSING, y = aiExposure)) +
 ggsave("racePlot.jpg", plot = racePlot, width = 8, height = 6)
 
 indModel <- lm(aiExposure ~ as.factor(industry) + as.factor(YEAR), data=data)
-# summary(indModel)
 indPlot <- ggplot(data, aes(x = industry, y = aiExposure)) +
   geom_boxplot(fill = "lightblue") +
   labs(title = "AI Exposure by Industry", x = "Industry", y = "AI Exposure") +
